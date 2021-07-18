@@ -41,3 +41,9 @@
     bottom: 55%;
     width: 100%;
 }
+
+.go-to-next-question-button {
+    position: absolute;
+    bottom: 0;
+    right: 50%;
+}

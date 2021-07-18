@@ -22,6 +22,9 @@ export default class TestState {
 
     goToNextTest() {
         this.currentTestIndex++;
+        this.clearAll();
+        this.renderTestForm();
+        this.renderTestQuestion();
     }
 
     getProgressPercentage() {
@@ -47,6 +50,7 @@ export default class TestState {
             }
             this.disableButtonsClick();
             this.handleAnswerChecked(success);
+            this.createGoToNextQuestionButton();
         });
     }
 
@@ -56,6 +60,20 @@ export default class TestState {
             el.classList.add('disabled');
             el.removeEventListener('click', () => {})
         })
+    }
+
+    clearAll() {
+        document.getElementById('flex_container').innerHTML = '';
+    }
+
+    createGoToNextQuestionButton() {
+        let goToNextQuestionButton = document.createElement('button');
+        goToNextQuestionButton.classList.add('btn', 'btn-lg', 'btn-success', 'text-center', 'go-to-next-question-button', 'mb-4');
+        goToNextQuestionButton.innerText = 'Далее';
+        goToNextQuestionButton.addEventListener('click', () => {
+            this.goToNextTest();
+        })
+        document.getElementById('test_container').appendChild(goToNextQuestionButton);
     }
 
     handleAnswerChecked(success) {
