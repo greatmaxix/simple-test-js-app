@@ -1,14 +1,15 @@
 import TestAppApiService from "./testAppApi";
-import successSound from './../public/assets/sounds/successSound.mp3';
-import errorSound from './../public/assets/sounds/errorSound.mp3';
+import UserAnswer from "../models/UserAnswer";
+import TestFinishedState from "./testFinishedState";
+import baseTestState from "./baseTestState";
 
-export default class TestState {
+export default class TestState extends baseTestState {
     constructor(testList) {
+        super();
         this.testList = testList;
         this.currentTestIndex = 0;
         this.renderTestForm();
-        this.apiService = new TestAppApiService();
-        this.volumeOn = true;
+        this.userAnswersList = [];
     }
 
     get currentTest() {
@@ -27,6 +28,8 @@ export default class TestState {
         this.clearAll();
         if (this.currentTestIndex + 1 === this.testLength) {
             //todo handle last page!
+            let testFinishState = new TestFinishedState(this.testList, this.userAnswersList);
+            testFinishState.renderResultPage();
         }
         else {
             this.currentTestIndex++;
@@ -48,6 +51,7 @@ export default class TestState {
         this.apiService.checkAnswer(this.currentTest.id, answerKey).then(({data}) => {
             const success = data.success;
             let answerVariantButton = document.getElementById(`answer-button-${answerKey}`);
+            this.userAnswersList.push((new UserAnswer(this.currentTest.id, answerKey)));
             if (success) {
                 answerVariantButton.classList.remove('btn-info');
                 answerVariantButton.classList.add('btn-success');
@@ -68,32 +72,6 @@ export default class TestState {
             el.classList.add('disabled');
             el.removeEventListener('click', () => {})
         })
-    }
-
-    handleVolumeOnOff() {
-        this.volumeOn = !this.volumeOn;
-        let elem = document.getElementById('volume-image');
-        if (this.volumeOn) {
-            elem.classList.replace('off', 'on');
-        }
-        else {
-            elem.classList.replace('on', 'off');
-        }
-    }
-
-    playSound(success) {
-        let sound = errorSound;
-        if (this.volumeOn) {
-            if (success) {
-                sound = successSound; 
-            }
-            let audio = new Audio(sound);
-            audio.play();
-        }
-    }
-
-    clearAll() {
-        document.getElementById('flex_container').innerHTML = '';
     }
 
     createGoToNextQuestionButton() {

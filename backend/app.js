@@ -30,8 +30,8 @@ app.get('/', function (req, res) {
 app.get('/tests', function (req, res) {
     const limit = parseInt(req.query.limit ? req.query.limit : 10);
     const offset = parseInt(req.query.offset ? req.query.offset : 0);
-    const query = "select test.id, test.question, test.image_path, test.sound_path, answer.answers_json, answer.is_multiple, answer.test_id from test "
-    + "left join answer on test.id = answer.test_id LIMIT ? offset ?";
+    let selectList = 'test.id, test.question, test.image_path, test.sound_path, answer.answers_json, answer.is_multiple, answer.test_id';
+    const query = "select " + selectList + "  from test left join answer on test.id = answer.test_id LIMIT ? offset ?";
     connection.query(query, [limit, offset], (error, result) => {
         if (error) {
             res.status(422);
@@ -67,6 +67,31 @@ app.post('/check-answer/:id', function (req, res) {
             res.json({
                 'success': userCorrectAnswerSum === result.length,
                 'percentage': correctAnswersLength > 0 ? ((userCorrectAnswerSum / correctAnswersLength) * 100) : 0
+            });
+        }
+    })
+})
+
+app.post('/get-answers-by-q-ids', function (req, res) {
+    if (!req.body.data.question_ids) {
+        res.status(405);
+        res.send('Provide question ids to get answers!');
+    }
+
+    const questionIds = req.body.data.question_ids;
+
+    let selectList = 'test.id, answer.right_answer_keys';
+    const query = "select " + selectList + "  from test left join answer on test.id = answer.test_id where test.id in (?)";
+    connection.query(query, [questionIds], (error, result) => {
+        if (error) {
+            console.log(error);
+            res.status(422);
+            res.send("Error occured");
+        }
+        else {
+            res.status(200);
+            res.json({
+                result
             });
         }
     })

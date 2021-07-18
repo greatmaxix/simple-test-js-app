@@ -21,4 +21,12 @@ export default class TestAppApiService extends ApiService {
             }
         });
     }
+
+    async getAllAnswersByQuestionIds(questionIds) {
+        return await this.axios.post(`/get-answers-by-q-ids`, {
+            data: {
+                question_ids: questionIds
+            }
+        });
+    }
 }
