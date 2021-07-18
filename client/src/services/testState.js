@@ -186,7 +186,7 @@ export default class TestState extends baseTestState {
 
         let questionTextItem = document.createElement('h5');
         questionTextItem.id = 'question_text_item';
-        questionTextItem.classList.add('m-auto', 'pt-2');
+        questionTextItem.classList.add('m-auto', 'pt-2', 'px-2');
         questionTextContainer.appendChild(questionTextItem);
     }
 
@@ -197,13 +197,13 @@ export default class TestState extends baseTestState {
     }
 
     renderTestVariants(answers) {
-        let answersKeys = Object.keys(answers);
+        let answersKeys = Object.keys(answers).sort(this.helper.randomize);
         let answerContainer = document.createElement('div');
         answerContainer.classList.add('d-flex', 'flex-column', 'mt-5');
         answerContainer.id = 'answer_container';
 
         for (let i = 1; i <= answersKeys.length; i++) {
-            const currAnswer = answers[i];
+            const currAnswer = answers[answersKeys[i - 1]];
             let currAnswerElement = document.createElement('button');
             currAnswerElement.id = `answer-button-${i}`;
             currAnswerElement.name = 'answer-button';

@@ -10,6 +10,14 @@ export default class Helper {
             const currItem = data[i];
             parsedData.push(new Test(currItem.question, currItem.id, currItem.sound_path, currItem.image_path, currItem.answers_json, currItem.is_multiple));
         }
-        return parsedData;
+        return this.shuffle(parsedData);
+    }
+
+    shuffle(array) {
+        return Array.isArray(array) ? array.sort(this.randomize) : array;
+    }
+
+    randomize(a, b) {
+        return Math.random() - 0.5;
     }
 }
