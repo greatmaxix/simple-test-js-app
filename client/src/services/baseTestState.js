@@ -1,10 +1,12 @@
 import TestAppApiService from "./testAppApi";
 import successSound from './../public/assets/sounds/successSound.mp3';
 import errorSound from './../public/assets/sounds/errorSound.mp3';
+import Helper from "./helper";
 
 export default class baseTestState {
     constructor() {
         this.apiService = new TestAppApiService();
+        this.helper = new Helper();
         this.volumeOn = true;
     }
 
