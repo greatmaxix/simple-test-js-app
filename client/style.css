@@ -1,0 +1,43 @@
+.notification-image-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 40vw;
+    height: 55vh;
+}
+
+.notification-image {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.notification-image.success {
+    background-image: url('./src/public/assets/images/naruto.png');
+}
+
+.notification-image.error {
+    background-image: url('./src/public/assets/images/kakashi.png');
+}
+
+.notification-message {
+    position: absolute;
+    width: 15rem;
+    height: 15rem;
+    right: 20vw;
+    bottom: 20vh;
+}
+
+.notification-message > img {
+    content:url('./src/public/assets/svg/speechBubble.svg');
+}
+
+.notification-message > h5 {
+    position: absolute;
+    bottom: 55%;
+    width: 100%;
+}

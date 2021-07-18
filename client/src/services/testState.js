@@ -34,7 +34,56 @@ export default class TestState {
     }
 
     checkAnswer(answerKey) {
-        this.apiService.checkAnswer(this.currentTest.id, answerKey);
+        this.apiService.checkAnswer(this.currentTest.id, answerKey).then(({data}) => {
+            const success = data.success;
+            let answerVariantButton = document.getElementById(`answer-button-${answerKey}`);
+            if (success) {
+                answerVariantButton.classList.remove('btn-info');
+                answerVariantButton.classList.add('btn-success');
+            }
+            else {
+                answerVariantButton.classList.remove('btn-info');
+                answerVariantButton.classList.add('btn-danger');
+            }
+            this.disableButtonsClick();
+            this.handleAnswerChecked(success);
+        });
+    }
+
+    disableButtonsClick() {
+        document.getElementsByName('answer-button').forEach(el => {
+            el.disabled = true;
+            el.classList.add('disabled');
+            el.removeEventListener('click', () => {})
+        })
+    }
+
+    handleAnswerChecked(success) {
+        let notificationImageContainer = document.createElement('div');
+        let message = 'Хорош!';
+        notificationImageContainer.classList.add('notification-image-container');
+        let messageDiv = document.createElement('div');
+        messageDiv.classList.add('notification-message');
+
+        let messageImg = document.createElement('img');
+        messageDiv.appendChild(messageImg);
+        let messageText = document.createElement('h5');
+        messageText.classList.add('text-center');
+        messageDiv.appendChild(messageText);
+
+        let imageDiv = document.createElement('div');
+        imageDiv.classList.add('notification-image');
+        notificationImageContainer.appendChild(messageDiv);
+        notificationImageContainer.appendChild(imageDiv);
+        if (success) {
+            imageDiv.classList.add('success');
+        }
+        else {
+            imageDiv.classList.add('error');
+            message = "Попробуй еще раз!";
+        }
+        messageText.innerText = message;
+        document.getElementById('test_container').appendChild(notificationImageContainer);
     }
 
     renderTestForm() {
@@ -97,11 +146,13 @@ export default class TestState {
 
         for (let i = 1; i <= answersKeys.length; i++) {
             const currAnswer = answers[i];
-            let currAnswerElement = document.createElement('div');
-            currAnswerElement.classList.add('bg-primary', 'text-center', 'mx-1', 'my-1')
+            let currAnswerElement = document.createElement('button');
+            currAnswerElement.id = `answer-button-${i}`;
+            currAnswerElement.name = 'answer-button';
+            currAnswerElement.classList.add('btn', 'btn-info', 'text-center', 'w-25', 'ml-3', 'my-1')
             currAnswerElement.innerText = currAnswer.answer_text;
             currAnswerElement.addEventListener('click', () => {
-                this.checkAnswer(i)
+                this.checkAnswer(i);
             });
             answerContainer.appendChild(currAnswerElement);
         }
