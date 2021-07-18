@@ -33,7 +33,7 @@
 }
 
 .notification-message > img {
-    content:url('./src/public/assets/svg/speechBubble.svg');
+    content: url('./src/public/assets/svg/speechBubble.svg');
 }
 
 .notification-message > h5 {
@@ -46,4 +46,17 @@
     position: absolute;
     bottom: 0;
     right: 50%;
+}
+
+.volume-icon {
+    width: 20%;
+    height: 100%;
+}
+
+.volume-icon.on {
+    content: url('./src/public/assets/svg/volume.svg');
+}
+
+.volume-icon.off {
+    content: url('./src/public/assets/svg/mute.svg');
 }

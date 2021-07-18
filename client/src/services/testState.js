@@ -1,4 +1,6 @@
 import TestAppApiService from "./testAppApi";
+import successSound from './../public/assets/sounds/successSound.mp3';
+import errorSound from './../public/assets/sounds/errorSound.mp3';
 
 export default class TestState {
     constructor(testList) {
@@ -6,6 +8,7 @@ export default class TestState {
         this.currentTestIndex = 0;
         this.renderTestForm();
         this.apiService = new TestAppApiService();
+        this.volumeOn = true;
     }
 
     get currentTest() {
@@ -21,10 +24,15 @@ export default class TestState {
     }
 
     goToNextTest() {
-        this.currentTestIndex++;
         this.clearAll();
-        this.renderTestForm();
-        this.renderTestQuestion();
+        if (this.currentTestIndex + 1 === this.testLength) {
+            //todo handle last page!
+        }
+        else {
+            this.currentTestIndex++;
+            this.renderTestForm();
+            this.renderTestQuestion();
+        }
     }
 
     getProgressPercentage() {
@@ -62,6 +70,28 @@ export default class TestState {
         })
     }
 
+    handleVolumeOnOff() {
+        this.volumeOn = !this.volumeOn;
+        let elem = document.getElementById('volume-image');
+        if (this.volumeOn) {
+            elem.classList.replace('off', 'on');
+        }
+        else {
+            elem.classList.replace('on', 'off');
+        }
+    }
+
+    playSound(success) {
+        let sound = errorSound;
+        if (this.volumeOn) {
+            if (success) {
+                sound = successSound; 
+            }
+            let audio = new Audio(sound);
+            audio.play();
+        }
+    }
+
     clearAll() {
         document.getElementById('flex_container').innerHTML = '';
     }
@@ -77,6 +107,7 @@ export default class TestState {
     }
 
     handleAnswerChecked(success) {
+        this.playSound(success);
         let notificationImageContainer = document.createElement('div');
         let message = 'Хорош!';
         notificationImageContainer.classList.add('notification-image-container');
@@ -116,12 +147,43 @@ export default class TestState {
         this.renderTestQuestionContainer();
     }
 
+    createTopMenuElements() {
+        let container = document.getElementById('top_menu');
+        let volumeElement = document.createElement('button');
+        volumeElement.addEventListener('click', () => {
+            this.handleVolumeOnOff()
+        })
+        volumeElement.classList.add('btn', 'btn-ligth');
+        let volumeImage = document.createElement('img');
+        volumeImage.id = 'volume-image';
+        volumeImage.classList.add('volume-icon', 'on');
+        volumeElement.appendChild(volumeImage);
+        container.appendChild(volumeElement);
+
+
+        let readTextElement = document.createElement('div');
+        readTextElement.classList.add('mr-auto');
+        container.appendChild(readTextElement);
+
+        let questionCounter = document.createElement('h4');
+        questionCounter.classList.add('text-muted');
+        questionCounter.innerText = `${this.currrentTestIndex + 1}/${this.testList.length}`;
+        container.appendChild(questionCounter);
+        
+    }
+
     renderTestQuestionContainer() {
         let testContainer = document.getElementById('test_container');
         let questionTextContainer = document.createElement('div');
         questionTextContainer.id = 'question_text_container';
         questionTextContainer.classList.add('d-flex', 'flex-column', 'justify-content-center');
         testContainer.appendChild(questionTextContainer);
+
+        let topMenu = document.createElement('div');
+        topMenu.classList.add('d-flex', 'flex-row', 'w-100');
+        topMenu.id = 'top_menu';
+        questionTextContainer.appendChild(topMenu);
+        this.createTopMenuElements();
 
         let questionHeader = document.createElement('h4');
         questionHeader.id = 'question_text_header';
